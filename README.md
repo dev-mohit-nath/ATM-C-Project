@@ -54,3 +54,13 @@ Welcome, <UserName>
 2. Deposit Money
 3. Withdraw Money
 4. Logout
+while(fscanf(fp, "%d,%49[^,],%d,%f\n", 
+             &acc.accNumber, acc.name, &acc.PIN, &acc.Deposit) == 4) {
+    if (acc.accNumber == user.accNumber) {
+        fprintf(temp, "%d,%s,%d,%.2f\n",
+                user.accNumber, user.name, user.PIN, user.Deposit);
+    } else {
+        fprintf(temp, "%d,%s,%d,%.2f\n",
+                acc.accNumber, acc.name, acc.PIN, acc.Deposit);
+    }
+}
