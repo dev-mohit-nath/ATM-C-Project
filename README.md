@@ -1,66 +1,67 @@
-# 🏧 ATM Banking System (C Language)
+🏦 ATM System in C
 
-A simple **ATM Simulation Project** written in C that allows users to:
-- Register/Login using Account Number & PIN
-- Check Balance
-- Deposit Money
-- Withdraw Money
-- Update Account Balance (stored in a file)
+This is a small project I built in C language that works like a basic ATM machine.
+It lets you create an account, log in, check balance, deposit, and withdraw money.
+I used file handling so that account details stay saved even after you close the program.
 
-This project demonstrates **file handling**, **structures**, and **menu-driven programming** in C.
+✨ What it does
 
----
+Create a new account with Name, Account Number, PIN, and Deposit
 
-## 📂 Project Structure
+Login with your Account Number + PIN
 
----
+After login, you get an ATM menu:
 
-## 📖 Features
+Check balance
 
-- ✅ User Login with Account Number & PIN  
-- ✅ Check Account Balance  
-- ✅ Deposit Money  
-- ✅ Withdraw Money (with validation)  
-- ✅ Balance Updates saved in `Account.txt`  
-- ✅ Secure update using temporary file  
+Deposit money
 
----
+Withdraw money
 
-## 🗂️ Account File Format (`Account.txt`)
+Logout
 
----
+🛠 How I built it
 
-## 🖥️ Program Flow
+Language: C
 
-### 1️⃣ Login Phase
-The program reads each line from `Account.txt`:
+Used structures to store account info
 
-```c
-while(fscanf(fp, "%d,%49[^,],%d,%f\n",
-             &user.accNo, user.name, &user.pin, &user.balance) == 4) {
-    if(user.accNo == accNo && user.pin == pin) {
-        found = 1;
-        printf("✅ Login Successful\n");
-        ATMmenu(user);
-        break;
-    }
-}
+Used file handling (Account.txt) to save accounts permanently
+🛠 How I built it
 
-==========================================
-              ATM Main Menu
-==========================================
-Welcome, <UserName>
-1. Check Balance
-2. Deposit Money
-3. Withdraw Money
-4. Logout
-while(fscanf(fp, "%d,%49[^,],%d,%f\n", 
-             &acc.accNumber, acc.name, &acc.PIN, &acc.Deposit) == 4) {
-    if (acc.accNumber == user.accNumber) {
-        fprintf(temp, "%d,%s,%d,%.2f\n",
-                user.accNumber, user.name, user.PIN, user.Deposit);
-    } else {
-        fprintf(temp, "%d,%s,%d,%.2f\n",
-                acc.accNumber, acc.name, acc.PIN, acc.Deposit);
-    }
-}
+Language: C
+
+Used structures to store account info
+
+Used file handling (Account.txt) to save accounts permanently
+
+▶️ How to run
+
+Download or clone this repo:
+
+git clone https://github.com/your-username/ATM-Project.git
+cd ATM-Project
+
+
+Compile the code:
+
+gcc main.c -o atm
+
+
+Run it:
+
+./atm
+
+📂 Files
+
+main.c → the source code
+
+Account.txt → gets created automatically, stores account info
+
+🚀 Future ideas
+
+Add money transfer between accounts
+
+Add transaction history
+
+Add "Forgot PIN" option
