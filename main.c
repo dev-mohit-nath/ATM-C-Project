@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 struct Account
 {
     char name[50];
@@ -9,6 +8,10 @@ struct Account
     int PIN;
     float Deposit;
 };
+void RegisterAccount();
+void LoginAccount();
+void ATMmenu(struct Account user);
+void updateBalance(struct Account user);
 int main()
 {
     int choice;
@@ -16,9 +19,9 @@ int main()
     printf("==========================================\n");
     printf("                 MEIN MENU                \n");
     printf("==========================================\n");
-    printf("1.Create Account\n");
-    printf("1.Login (Existing User)\n");
-    printf("1.Exit\n");
+    printf("[1] Create Account\n");
+    printf("[2] Login (Existing User)\n");
+    printf("[3] Exit\n");
     printf("Enter your choice: ");
     scanf("%d", &choice);
     if (choice == 1)
@@ -45,7 +48,7 @@ int main()
 }
 void RegisterAccount()
 {
-    struct Account p1;
+    struct Account user;
     FILE *fp;
 
     system("cls");
@@ -55,61 +58,61 @@ void RegisterAccount()
     do
     {
         printf("Enter your name: ");
-        scanf("%s", p1.name);
-        if (strlen(p1.name) == 0)
+        scanf(" %[^\n]", user.name);
+        if (strlen(user.name) == 0)
         {
             printf("Name can not be empty! try again.\n");
         }
 
-    } while (strlen(p1.name) == 0);
+    } while (strlen(user.name) == 0);
     do
     {
         printf("Enter Account Number: ");
-        scanf("%d", &p1.accNumber);
-        if (p1.accNumber <= 0)
+        scanf("%d", &user.accNumber);
+        if (user.accNumber <= 0)
         {
             printf("Invalid account number! Try again.\n");
         }
 
-    } while (p1.accNumber <= 0);
+    } while (user.accNumber <= 0);
 
     do
     {
         printf("Set a 4-digit PIN: ");
-        scanf("%d", &p1.PIN);
-        if (p1.PIN < 1000 || p1.PIN > 9999)
+        scanf("%d", &user.PIN);
+        if (user.PIN < 1000 || user.PIN > 9999)
         {
             printf("Invalid PIN!\n");
         }
 
-    } while (p1.PIN < 1000 || p1.PIN > 9999);
+    } while (user.PIN < 1000 || user.PIN > 9999);
     do
     {
         printf("Enter Initial Deposit: ");
-        scanf("%f", &p1.Deposit);
-        if (p1.Deposit < 1000)
+        scanf("%f", &user.Deposit);
+        if (user.Deposit < 1000)
         {
             printf("Minimum deposit shoud be 1000.\n");
         }
 
-    } while (p1.Deposit < 1000);
-    fp = fp = fopen("C:\\ATM_project\\Account.txt", "a");
+    } while (user.Deposit < 1000);
+    fp = fopen("Account.txt", "a");
     if (fp == NULL)
     {
         printf("Error opening file!\n");
         return;
     }
-    fprintf(fp, "%d,%s,%d,%.2f,\n", p1.accNumber, p1.name, p1.PIN, p1.Deposit);
+    fprintf(fp, "%d,%s,%d,%.2f\n", user.accNumber, user.name, user.PIN, user.Deposit);
     fclose(fp);
-    printf("Account Number: %d\n", p1.accNumber);
-    printf("Name: %s\n", p1.name);
-    printf("Set PIN: %d\n", p1.PIN);
-    printf("Initial Deposit: %2.f\n", p1.Deposit);
+    printf("Account Number: %d\n", user.accNumber);
+    printf("Name: %s\n", user.name);
+    printf("Set PIN: %d\n", user.PIN);
+    printf("Initial Deposit: %.2f\n", user.Deposit);
     system("cls");
 }
 void LoginAccount()
 {
-    struct Account p1;
+    struct Account user;
     FILE *fp;
     int accNo, Pin;
     int found = 0;
@@ -123,24 +126,26 @@ void LoginAccount()
     printf("Enter a PIN: ");
     scanf("%d", &Pin);
 
-    fp = fopen("C:\\ATM_project\\Account.txt", "r");
+    fp = fopen("Account.txt", "r");
     if (fp == NULL)
     {
         printf("NO account found! please rigister first.\n");
         return;
     }
 
-    while (fscanf(fp, "%d,%s,%d,%f,\n", &p1.accNumber, p1.name, &p1.PIN, &p1.Deposit) == 4)
+    while (fscanf(fp, "%d,%49[^,],%d,%f",
+                  &user.accNumber, user.name, &user.PIN, &user.Deposit) == 4)
     {
-        if (p1.accNumber == accNo && p1.PIN == Pin)
+        if (user.accNumber == accNo && user.PIN == Pin)
         {
             found = 1;
             printf("\nlogin Successful!\n");
-            printf("\nWelcome, %s\n", p1.name);
-            printf("Your Balance: %.2f\n", p1.Deposit);
+            printf("\nWelcome, %s\n", user.name);
+            printf("Your Balance: %.2f\n", user.Deposit);
             fclose(fp);
             system("pause");
-            ATMmenu(p1);
+            ATMmenu(user);
+            return;
         }
     }
     fclose(fp);
@@ -150,6 +155,127 @@ void LoginAccount()
         system("pause");
     }
 }
-void ATMmenu()
+
+void ATMmenu(struct Account user)
 {
+    int choice;
+    float amount;
+
+    while (1)
+    {
+        system("cls");
+        printf("==========================================\n");
+        printf("              ATM Main Menu               \n");
+        printf("==========================================\n");
+        printf("Welcome, %s\n", user.name);
+        printf("[1] check balance\n");
+        printf("[2] Deposite Money\n");
+        printf("[3] withdraw Money\n");
+        printf("[4] logout\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+        case 1:
+        {
+            FILE *fp = fopen("Account.txt", "r");
+            struct Account acc;
+            if (fp == NULL)
+            {
+                printf("Error opening file!\n");
+                system("pause");
+                break;
+            }
+            int found = 0;
+            while (fscanf(fp, "%d,%49[^,],%d,%f", &acc.accNumber, acc.name, &acc.PIN, &acc.Deposit) == 4)
+            {
+                if (acc.accNumber == user.accNumber)
+                {
+                    printf("Your balance: %.2f\n", acc.Deposit);
+                    found = 1;
+                    break;
+                }
+            }
+            fclose(fp);
+
+            if (!found)
+            {
+                printf("Account not found!\n");
+            }
+
+            system("pause");
+            break;
+        }
+        case 2:
+            printf("Enter Deposit Amount: ");
+            scanf("%f", &amount);
+            if (amount > 0)
+            {
+                user.Deposit += amount;
+                updateBalance(user);
+                printf("Deposited %.2f successfully!\n", amount);
+            }
+            else
+            {
+                printf("Invalid Amount!\n");
+            }
+            system("pause");
+            break;
+        case 3:
+            printf("Enter withdraw amount: ");
+            scanf("%f", &amount);
+            if (amount > 0 && amount <= user.Deposit)
+            {
+                user.Deposit -= amount;
+                updateBalance(user);
+                printf("withdraw %.2f successfully!\n", amount);
+            }
+            else
+            {
+                printf("Insufficient balance or Invalid ammount!\n");
+            }
+            system("pause");
+            break;
+        case 4:
+            printf("Loggin out....");
+            system("pause");
+            main();
+            return;
+        default:
+            printf("invalid choice!\n");
+            system("pause");
+            break;
+        }
+    }
+}
+void updateBalance(struct Account user)
+{
+    FILE *fp, *temp;
+    struct Account acc;
+
+    fp = fopen("Account.txt", "r");
+    temp = fopen("temp.txt", "w");
+
+    if (fp == NULL || temp == NULL)
+    {
+        printf("File error!\n");
+        return;
+    }
+    while (fscanf(fp, "%d,%49[^,],%d,%f", &acc.accNumber, acc.name, &acc.PIN, &acc.Deposit) == 4)
+    {
+        if (acc.accNumber == user.accNumber)
+        {
+            fprintf(temp, "%d,%s,%d,%.2f\n", user.accNumber, user.name, user.PIN, user.Deposit);
+        }
+        else
+        {
+            fprintf(temp, "%d,%s,%d,%.2f\n", acc.accNumber, acc.name, acc.PIN, acc.Deposit);
+        }
+    }
+    fclose(fp);
+    fclose(temp);
+
+    remove("Account.txt");
+    rename("temp.txt", "Account.txt");
 }
